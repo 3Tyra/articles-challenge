@@ -64,3 +64,11 @@ class Author:
 
     def __repr__(self):
         return f"<Author id={self.id} name={self.name!r}>"
+
+    def __eq__(self, other):
+        if isinstance(other, Author):
+            return self.id == other.id and self.name == other.name
+        return False
+
+    def __hash__(self):
+        return hash((self.id, self.name))
