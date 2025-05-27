@@ -1,23 +1,37 @@
 from lib.db.connection import get_connection
 
 class Author:
-    def __init__(self, name, id=None):
+    def __init__(self, name: str, id: int = None):
+        if not name:
+            raise ValueError("Name cannot be empty")
         self.id = id
         self.name = name
 
-    def save(self):
+    def save(self) -> None:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO authors (name) VALUES (?)", (self.name,))
-        self.id = cursor.lastrowid
+        if self.id:
+            cursor.execute("UPDATE authors SET name = ? WHERE id = ?", (self.name, self.id))
+        else:
+            cursor.execute("INSERT INTO authors (name) VALUES (?)", (self.name,))
+            self.id = cursor.lastrowid
         conn.commit()
         conn.close()
 
     @classmethod
-    def find_by_id(cls, id):
+    def find_by_id(cls, id: int):
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM authors WHERE id = ?", (id,))
+        row = cursor.fetchone()
+        conn.close()
+        return cls(row["name"], row["id"]) if row else None
+
+    @classmethod
+    def find_by_name(cls, name: str):
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM authors WHERE name = ?", (name,))
         row = cursor.fetchone()
         conn.close()
         return cls(row["name"], row["id"]) if row else None
@@ -31,15 +45,15 @@ class Author:
         conn = get_connection()
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT DISTINCT m.* FROM magazines m
-        JOIN articles a ON m.id = a.magazine_id
-        WHERE a.author_id = ?
+            SELECT DISTINCT m.* FROM magazines m
+            JOIN articles a ON m.id = a.magazine_id
+            WHERE a.author_id = ?
         """, (self.id,))
         rows = cursor.fetchall()
         conn.close()
         return [Magazine(row["name"], row["category"], row["id"]) for row in rows]
 
-    def add_article(self, magazine, title):
+    def add_article(self, magazine, title: str):
         from .article import Article
         article = Article(title=title, author_id=self.id, magazine_id=magazine.id)
         article.save()
@@ -47,3 +61,6 @@ class Author:
 
     def topic_areas(self):
         return list(set([m.category for m in self.magazines()]))
+
+    def __repr__(self):
+        return f"<Author id={self.id} name={self.name!r}>"

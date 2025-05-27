@@ -1,42 +1,51 @@
 import sys
 import os
 
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Insert the parent directory at the start of sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from lib.models.author import Author
 from lib.models.magazine import Magazine
 from lib.models.article import Article
 
+def main():
+    try:
+        author1 = Author(name="Ngũgĩ wa Thiong’o")
+        author2 = Author(name="Wole Soyinka")
 
-author = Author(name="Chinua Achebe")
-author.save()
+        author1.save()
+        author2.save()
 
+        mag1 = Magazine(name="Pan African Voice", category="Politics")
+        mag2 = Magazine(name="Lit & Verse", category="Literature")
 
-mag = Magazine(name="African Literature", category="Culture")
-mag.save()
+        mag1.save()
+        mag2.save()
 
+        article1 = Article(title="Writing for Freedom", author_id=author1.id, magazine_id=mag1.id)
+        article2 = Article(title="The Drama of Language", author_id=author2.id, magazine_id=mag2.id)
 
-article = Article(title="The Power of Storytelling", author_id=author.id, magazine_id=mag.id)
-article.save()
+        article1.save()
+        article2.save()
 
-print("=== Test Data Added ===")
-print(f"Author: {author.id} - {author.name}")
-print(f"Magazine: {mag.id} - {mag.name} ({mag.category})")
-print(f"Article: {article.id} - {article.title}")
+        print("=== Data Added ===")
+        print(f"{author1.name} wrote '{article1.title}' in {mag1.name}")
+        print(f"{author2.name} wrote '{article2.title}' in {mag2.name}")
 
-print("\n=== Author Articles ===")
-for a in author.articles():
-    print(f"- {a.title}")
+        print("\nArticles by", author1.name)
+        for article in author1.articles():
+            print(f"- {article.title}")
 
-print("\n=== Author Magazines ===")
-for m in author.magazines():
-    print(f"- {m.name}")
+        print("\nMagazines featuring", author1.name)
+        for mag in author1.magazines():
+            print(f"- {mag.name}")
 
-print("\n=== Magazine Articles ===")
-for a in mag.articles():
-    print(f"- {a.title}")
+        print("\nContributors to", mag2.name)
+        for contributor in mag2.contributors():
+            print(f"- {contributor.name}")
 
-print("\n=== Magazine Contributors ===")
-for c in mag.contributors():
-    print(f"- {c.name}")
+    except Exception as e:
+        print(f"Error: {e}")
+
+if __name__ == "__main__":
+    main()
