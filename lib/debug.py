@@ -1,7 +1,7 @@
 import sys
 import os
 
-# Insert the parent directory at the start of sys.path
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from lib.models.author import Author
