@@ -6,7 +6,7 @@ from lib.db.connection import get_connection
 
 @pytest.fixture(autouse=True)
 def clear_tables():
-    # Clear tables before each test
+    
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM articles")

@@ -50,7 +50,7 @@ def test_contributing_authors_method():
     mag = Magazine(name="Mag 1", category="Category 1")
     mag.save()
 
-    # Create 3 articles for author in this magazine (more than 2)
+   
     for i in range(3):
         article = Article(title=f"Article {i+1}", author_id=author.id, magazine_id=mag.id)
         article.save()

@@ -1,8 +1,7 @@
-# seed.py
 import sys
 import os
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'lib')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'lib')))
 
 from models.author import Author
 from models.magazine import Magazine
@@ -31,5 +30,5 @@ def seed():
     }
 
 if __name__ == "__main__":
-    seed()
-
+    data = seed()
+    print(f"Seeded {len(data['authors'])} authors, {len(data['magazines'])} magazines, and {len(data['articles'])} articles.")
